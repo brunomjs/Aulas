@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java Enterprise School System</title>
+    <title>Java Enterprise School System - Normal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background: linear-gradient(135deg, #0f172a, #1e293b); color: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
@@ -54,7 +54,7 @@
         <div id="resultado" class="result-box"></div>
     </div>
 
-    <!-- CÓDIGO JAVASCRIPT ORIGINAL -->
+    <!-- O JAVASCRIPT CORRETO E VISÍVEL FICA AQUI DENTRO -->
     <script>
         document.getElementById("btnProcessar").addEventListener("click", function() {
             const n1 = parseFloat(document.getElementById("nota1").value);
@@ -63,19 +63,16 @@
             const spinner = document.getElementById("loadingSpinner");
             const btnText = document.getElementById("btnText");
 
-            // Validação simples de preenchimento
             if (isNaN(n1) || isNaN(n2) || n1 < 0 || n1 > 20 || n2 < 0 || n2 > 20) {
                 resBox.className = "result-box danger show";
                 resBox.innerText = "Por favor, introduza notas válidas de 0 a 20.";
                 return;
             }
 
-            // Ativa o estado de carregamento (Loading)
             spinner.style.display = "block";
             btnText.innerText = "A ligar à JVM...";
             resBox.className = "result-box"; 
 
-            // Simulação de delay de resposta do servidor (1.5 segundos)
             setTimeout(function() {
                 spinner.style.display = "none";
                 btnText.innerText = "Compilar e Processar";
@@ -94,4 +91,3 @@
     </script>
 </body>
 </html>
-
