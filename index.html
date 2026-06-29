@@ -2,25 +2,96 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>A minha Aplicação Java Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Enterprise School System</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding: 50px; }
-        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
-        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #0056b3; }
-        #resultado { margin-top: 20px; font-weight: bold; color: #28a745; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #1e293b); color: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .dashboard { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 24px; width: 100%; max-width: 480px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; }
+        .logo-container { margin-bottom: 24px; }
+        .logo-icon { font-size: 48px; background: linear-gradient(135deg, #38bdf8, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: #f1f5f9; }
+        p { color: #94a3b8; font-size: 14px; margin-bottom: 32px; }
+        .input-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #38bdf8; margin-bottom: 8px; font-weight: 600; }
+        input { width: 100%; background: #0f172a; border: 1px solid #334155; padding: 14px 16px; border-radius: 12px; color: #fff; font-size: 16px; transition: all 0.3s; }
+        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .btn-submit { width: 100%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
+        .btn-submit:active { transform: translateY(0); }
+        .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .result-box { margin-top: 28px; padding: 20px; border-radius: 16px; font-size: 15px; font-weight: 500; display: none; transform: translateY(10px); opacity: 0; transition: all 0.4s ease; }
+        .success { background: rgba(22, 163, 74, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #4ade80; }
+        .danger { background: rgba(220, 38, 38, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; }
+        .show { display: block; transform: translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>Sistema Escolar Java</h1>
-        <p>Clique no botão para simular o processamento de dados do servidor.</p>
-        <button id="btnProcessar">Processar Notas</button>
-        <div id="resultado"></div>
+    <div class="dashboard">
+        <div class="logo-container">
+            <span class="logo-icon">☕</span>
+        </div>
+        <h1>Java Backend Controller</h1>
+        <p>Insira as notas da API para validar a aprovação do aluno.</p>
+        
+        <div class="input-group">
+            <label for="nota1">Nota do Teste Escrito</label>
+            <input type="number" id="nota1" placeholder="Ex: 14.5" min="0" max="20" step="0.1">
+        </div>
+        
+        <div class="input-group">
+            <label for="nota2">Nota do Trabalho Prático</label>
+            <input type="number" id="nota2" placeholder="Ex: 17.0" min="0" max="20" step="0.1">
+        </div>
+
+        <button id="btnProcessar" class="btn-submit">
+            <span class="spinner" id="loadingSpinner"></span>
+            <span id="btnText">Compilar e Processar</span>
+        </button>
+
+        <div id="resultado" class="result-box"></div>
     </div>
 
-    <!-- Ligação ao ficheiro JavaScript que será ofuscado -->
-    <script src="script.js"></script>
+    <!-- CÓDIGO JAVASCRIPT ORIGINAL -->
+    <script>
+        document.getElementById("btnProcessar").addEventListener("click", function() {
+            const n1 = parseFloat(document.getElementById("nota1").value);
+            const n2 = parseFloat(document.getElementById("nota2").value);
+            const resBox = document.getElementById("resultado");
+            const spinner = document.getElementById("loadingSpinner");
+            const btnText = document.getElementById("btnText");
+
+            // Validação simples de preenchimento
+            if (isNaN(n1) || isNaN(n2) || n1 < 0 || n1 > 20 || n2 < 0 || n2 > 20) {
+                resBox.className = "result-box danger show";
+                resBox.innerText = "Por favor, introduza notas válidas de 0 a 20.";
+                return;
+            }
+
+            // Ativa o estado de carregamento (Loading)
+            spinner.style.display = "block";
+            btnText.innerText = "A ligar à JVM...";
+            resBox.className = "result-box"; 
+
+            // Simulação de delay de resposta do servidor (1.5 segundos)
+            setTimeout(function() {
+                spinner.style.display = "none";
+                btnText.innerText = "Compilar e Processar";
+                
+                const media = (n1 + n2) / 2;
+                
+                if (media >= 9.5) {
+                    resBox.className = "result-box success show";
+                    resBox.innerHTML = "<strong>Status: APROVADO</strong><br>A média final calculada pelo Java foi de " + media.toFixed(2) + " valores.";
+                } else {
+                    resBox.className = "result-box danger show";
+                    resBox.innerHTML = "<strong>Status: REPROVADO</strong><br>A média final de " + media.toFixed(2) + " está abaixo do limite mínimo.";
+                }
+            }, 1500);
+        });
+    </script>
 </body>
 </html>
+
